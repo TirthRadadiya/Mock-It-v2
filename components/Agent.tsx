@@ -127,8 +127,9 @@ const Agent = ({
     } else {
       let formattedQuestions = "";
       if (questions) {
-        formattedQuestions = questions
-          .map((question) => `- ${question}`)
+        formattedQuestions = Object.keys(questions)
+          // @ts-ignore
+          .map((question: any) => `- ${questions?.question}`)
           .join("\n");
       }
 
