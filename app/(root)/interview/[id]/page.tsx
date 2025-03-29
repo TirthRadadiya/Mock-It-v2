@@ -24,6 +24,12 @@ const InterviewDetails = async ({ params }: RouteParams) => {
     userId: user?.id!,
   });
 
+  // useEffect(() => {
+  //   startSocket();
+
+  //   // return () => {};
+  // }, []);
+
   return (
     <>
       <div className="flex flex-row gap-4 justify-between">

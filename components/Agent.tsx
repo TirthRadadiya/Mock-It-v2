@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { vapi } from "@/lib/vapi.sdk";
 import { interviewer } from "@/constants";
 import { createFeedback } from "@/lib/actions/general.action";
+// import { useSocket } from "@/context/SocketProvider";
 
 enum CallStatus {
   INACTIVE = "INACTIVE",
@@ -34,6 +35,8 @@ const Agent = ({
   const [messages, setMessages] = useState<SavedMessage[]>([]);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [lastMessage, setLastMessage] = useState<string>("");
+
+  // const { sendMessage } = useSocket();
 
   useEffect(() => {
     const onCallStart = () => {
