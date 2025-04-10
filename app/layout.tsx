@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import { Mona_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import { ClerkProvider } from "@clerk/nextjs";
 
 import { SocketProvider } from "@/context/SocketProvider";
+import Header from "@/components/header";
+import { dark } from "@clerk/themes";
 
 const monaSans = Mona_Sans({
   variable: "--font-mona-sans",
@@ -21,13 +24,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <SocketProvider>
-        <body className={`${monaSans.className} antialiased pattern`}>
-          {children}
-          <Toaster />
-        </body>
-      </SocketProvider>
-    </html>
+    <ClerkProvider
+      appearance={{
+        baseTheme: dark,
+      }}
+    >
+      <html lang="en" className="dark">
+        <SocketProvider>
+          <body className={`${monaSans.className} antialiased pattern`}>
+            <Header />
+            <main className="min-h-screen">{children}</main>
+            <Toaster richColors />
+            <Toaster />
+          </body>
+        </SocketProvider>
+      </html>
+    </ClerkProvider>
   );
 }
