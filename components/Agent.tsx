@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import Image from "next/image";
@@ -8,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { vapi } from "@/lib/vapi.sdk";
 import { interviewer } from "@/constants";
 import { createFeedback } from "@/lib/actions/general.action";
-// import { useSocket } from "@/context/SocketProvider";
+import { useSocket } from "@/context/SocketProvider";
 
 enum CallStatus {
   INACTIVE = "INACTIVE",
@@ -35,118 +36,109 @@ const Agent = ({
   const [messages, setMessages] = useState<SavedMessage[]>([]);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [lastMessage, setLastMessage] = useState<string>("");
+  // const [agentMessage, setAgentMessage] = useState<string>("");
+  const [recognition, setRecognition] = useState<SpeechRecognition | null>(
+    null
+  );
 
-  // const { sendMessage } = useSocket();
+  const { sendMessage, agentMessage } = useSocket();
 
   useEffect(() => {
-    const onCallStart = () => {
-      setCallStatus(CallStatus.ACTIVE);
-    };
+    const SpeechRecognition =
+      window.speechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
 
-    const onCallEnd = () => {
-      setCallStatus(CallStatus.FINISHED);
-    };
+    recognition.continuous = true;
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    // recognition.maxAlternatives = 10;
 
-    const onMessage = (message: Message) => {
-      if (message.type === "transcript" && message.transcriptType === "final") {
-        const newMessage = { role: message.role, content: message.transcript };
-        setMessages((prev) => [...prev, newMessage]);
-      }
-    };
+    if (recognition) setRecognition(recognition);
 
-    const onSpeechStart = () => {
-      console.log("speech start");
-      setIsSpeaking(true);
-    };
+    // socket?.on("event:receive-message", (data) => {
+    //   console.log("receive message", data);
+    //   setAgentMessage(data.message);
+    // });
 
-    const onSpeechEnd = () => {
-      console.log("speech end");
-      setIsSpeaking(false);
-    };
-
-    const onError = (error: Error) => {
-      console.log("Error:", error);
-    };
-
-    vapi.on("call-start", onCallStart);
-    vapi.on("call-end", onCallEnd);
-    vapi.on("message", onMessage);
-    vapi.on("speech-start", onSpeechStart);
-    vapi.on("speech-end", onSpeechEnd);
-    vapi.on("error", onError);
-
-    return () => {
-      vapi.off("call-start", onCallStart);
-      vapi.off("call-end", onCallEnd);
-      vapi.off("message", onMessage);
-      vapi.off("speech-start", onSpeechStart);
-      vapi.off("speech-end", onSpeechEnd);
-      vapi.off("error", onError);
-    };
+    return () => recognition.stop();
   }, []);
 
   useEffect(() => {
-    if (messages.length > 0) {
-      setLastMessage(messages[messages.length - 1].content);
+    if (agentMessage) {
+      speakResponse(agentMessage);
     }
+  }, [agentMessage]);
 
-    const handleGenerateFeedback = async (messages: SavedMessage[]) => {
-      console.log("handleGenerateFeedback");
-
-      const { success, feedbackId: id } = await createFeedback({
-        interviewId: interviewId!,
-        userId: userId!,
-        transcript: messages,
-        feedbackId,
-      });
-
-      if (success && id) {
-        router.push(`/interview/${interviewId}/feedback`);
-      } else {
-        console.log("Error saving feedback");
-        router.push("/");
+  useEffect(() => {
+    const stopSpeech = (event: KeyboardEvent) => {
+      if (event.ctrlKey) {
+        speechSynthesis.cancel(); // Stops the speech
+        setIsSpeaking(false);
+        recognition?.start();
       }
     };
+  
+    window.addEventListener("keydown", stopSpeech);
+  
+    return () => {
+      window.removeEventListener("keydown", stopSpeech);
+      speechSynthesis.cancel(); // Stop speech on component unmount or refresh
+    };
+  }, [recognition]);
 
-    if (callStatus === CallStatus.FINISHED) {
-      if (type === "generate") {
-        router.push("/");
-      } else {
-        handleGenerateFeedback(messages);
-      }
-    }
-  }, [messages, callStatus, feedbackId, interviewId, router, type, userId]);
+  const speakResponse = (text: string) => {
+    setIsSpeaking(true);
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      recognition?.start(); // Resume recognition after speaking
+    };
+    speechSynthesis.speak(utterance);
+  };
 
   const handleCall = async () => {
-    setCallStatus(CallStatus.CONNECTING);
+    setCallStatus(CallStatus.ACTIVE);
+    if (!recognition) return;
 
-    if (type === "generate") {
-      await vapi.start(process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID!, {
-        variableValues: {
-          username: userName,
-          userid: userId,
-        },
-      });
-    } else {
-      let formattedQuestions = "";
-      if (questions) {
-        formattedQuestions = Object.keys(questions)
-          // @ts-ignore
-          .map((question: any) => `- ${questions?.question}`)
-          .join("\n");
-      }
+    recognition.start();
+    recognition.onresult = async (event) => {
+      const latestResultIndex = event.results.length - 1;
+      const latestTranscript = event.results[latestResultIndex][0].transcript;
+      setLastMessage(latestTranscript);
 
-      await vapi.start(interviewer, {
-        variableValues: {
-          questions: formattedQuestions,
-        },
-      });
-    }
+      recognition.stop(); // Stop listening while processing
+
+      sendMessage(latestTranscript);
+    };
+
+    // if (type === "generate") {
+    //   await vapi.start(process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID!, {
+    //     variableValues: {
+    //       username: userName,
+    //       userid: userId,
+    //     },
+    //   });
+    // } else {
+    //   let formattedQuestions = "";
+    //   if (questions) {
+    //     formattedQuestions = Object.keys(questions)
+    //       // @ts-ignore
+    //       .map((question: any) => `- ${questions?.question}`)
+    //       .join("\n");
+    //   }
+
+    //   await vapi.start(interviewer, {
+    //     variableValues: {
+    //       questions: formattedQuestions,
+    //     },
+    //   });
+    // }
   };
 
   const handleDisconnect = () => {
     setCallStatus(CallStatus.FINISHED);
-    vapi.stop();
+    // vapi.stop();
+    recognition?.stop();
   };
 
   return (
@@ -225,3 +217,51 @@ const Agent = ({
 };
 
 export default Agent;
+
+// VAPI RELATED CODE
+// useEffect(() => {
+//   const onCallStart = () => {
+//     setCallStatus(CallStatus.ACTIVE);
+//   };
+
+//   const onCallEnd = () => {
+//     setCallStatus(CallStatus.FINISHED);
+//   };
+
+//   const onMessage = (message: Message) => {
+//     if (message.type === "transcript" && message.transcriptType === "final") {
+//       const newMessage = { role: message.role, content: message.transcript };
+//       setMessages((prev) => [...prev, newMessage]);
+//     }
+//   };
+
+//   const onSpeechStart = () => {
+//     console.log("speech start");
+//     setIsSpeaking(true);
+//   };
+
+//   const onSpeechEnd = () => {
+//     console.log("speech end");
+//     setIsSpeaking(false);
+//   };
+
+//   const onError = (error: Error) => {
+//     console.log("Error:", error);
+//   };
+
+//   vapi.on("call-start", onCallStart);
+//   vapi.on("call-end", onCallEnd);
+//   vapi.on("message", onMessage);
+//   vapi.on("speech-start", onSpeechStart);
+//   vapi.on("speech-end", onSpeechEnd);
+//   vapi.on("error", onError);
+
+//   return () => {
+//     vapi.off("call-start", onCallStart);
+//     vapi.off("call-end", onCallEnd);
+//     vapi.off("message", onMessage);
+//     vapi.off("speech-start", onSpeechStart);
+//     vapi.off("speech-end", onSpeechEnd);
+//     vapi.off("error", onError);
+//   };
+// }, []);

@@ -1,0 +1,76 @@
+const insights = {
+  id: "cm91jw1dd0006ud9wm5v7t9c8",
+  industry: "tech-artificial-intelligence/machine-learning",
+  salaryRanges: [
+    {
+      max: 200000,
+      min: 100000,
+      role: "Machine Learning Engineer",
+      median: 150000,
+      location: "US",
+    },
+    {
+      max: 180000,
+      min: 90000,
+      role: "Data Scientist",
+      median: 135000,
+      location: "US",
+    },
+    {
+      max: 250000,
+      min: 120000,
+      role: "AI Researcher",
+      median: 180000,
+      location: "US",
+    },
+    {
+      max: 120000,
+      min: 60000,
+      role: "Data Analyst",
+      median: 90000,
+      location: "US",
+    },
+    {
+      max: 280000,
+      min: 150000,
+      role: "AI/ML Architect",
+      median: 210000,
+      location: "US",
+    },
+    {
+      max: 220000,
+      min: 110000,
+      role: "Software Engineer (AI/ML)",
+      median: 160000,
+      location: "US",
+    },
+  ],
+  growthRate: 25,
+  demandLevel: "HIGH",
+  topSkills: [
+    "Python",
+    "TensorFlow",
+    "PyTorch",
+    "Deep Learning",
+    "Machine Learning",
+  ],
+  marketOutlook: "POSITIVE",
+  keyTrends: [
+    "Generative AI",
+    "Large Language Models",
+    "Edge AI",
+    "Explainable AI (XAI)",
+    "MLOps",
+  ],
+  recommendedSkills: [
+    "Cloud Computing",
+    "Data Visualization",
+    "Big Data Technologies",
+    "Natural Language Processing (NLP)",
+    "Computer Vision",
+  ],
+  lastUpdated: "2025-04-04T04:13:27.568Z",
+  nextUpdate: "2025-04-11T04:13:27.568Z",
+};
+
+export default insights;
