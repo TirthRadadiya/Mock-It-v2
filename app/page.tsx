@@ -21,8 +21,16 @@ import { features } from "@/data/features";
 import { testimonial } from "@/data/testimonial";
 import { faqs } from "@/data/faqs";
 import { howItWorks } from "@/data/howItWorks";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+    const { userId } = await auth();
+  
+    // If user is logged in, redirect to dashboard
+    if (userId) {
+      redirect('/dashboard');
+    }
   return (
     <>
       <div className="grid-background"></div>
