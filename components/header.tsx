@@ -24,10 +24,13 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import Image from "next/image";
-import { checkUser } from "@/lib/checkUser";
+// import { checkUser } from "@/lib/checkUser"; 
+import { getUserOnboardingStatus } from "@/actions/user";
+import { currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 export default async function Header() {
-  await checkUser();
+  // await checkUser();
 
   return (
     <header className="fixed top-0 w-full border-b bg-background/80 backdrop-blur-md z-50 supports-[backdrop-filter]:bg-background/60">
