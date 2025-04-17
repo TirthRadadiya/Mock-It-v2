@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
@@ -61,6 +61,7 @@ const OnboardingForm = ({ techRoles }: { techRoles: string[] }) => {
           experienceYears: values?.experience,
           professionalSummary: values?.bio,
           skills: values?.skills,
+          onboardingCompleted: true
         }),
         headers: {
           "Content-Type": "application/json",
@@ -69,7 +70,7 @@ const OnboardingForm = ({ techRoles }: { techRoles: string[] }) => {
 
       const data = await res.json();
 
-      console.log(data);
+      if (data?.onboardingCompleted) redirect("/dashboard")
     } catch (error) {
       console.error("Onboarding error:", error);
     }
