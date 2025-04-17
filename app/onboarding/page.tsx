@@ -1,5 +1,5 @@
 // import { redirect } from "next/navigation";
-import { industries } from "@/data/industries";
+import {  techRoles } from "@/data/industries";
 import OnboardingForm from "./_components/onboarding-form";
 // import { getUserOnboardingStatus } from "@/actions/user";
 
@@ -13,7 +13,7 @@ export default async function OnboardingPage() {
 
   return (
     <main className="mt-20">
-      <OnboardingForm industries={industries} />
+      <OnboardingForm techRoles={techRoles} />
     </main>
   );
 }

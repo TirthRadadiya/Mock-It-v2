@@ -1,8 +1,7 @@
 // import { getIndustryInsights } from "@/actions/dashboard";
-import DashboardView from "./_component/dashboard-view";
-import insights from "@/data/insights"
 import { getUserOnboardingStatus } from "@/actions/user";
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation";
+import Sidebar from "./_component/Sidebar";
 // import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
@@ -10,16 +9,11 @@ export default async function DashboardPage() {
 
   // If not onboarded, redirect to onboarding page
   // Skip this check if already on the onboarding page
-  if (!isOnboarded) {
-   redirect("/onboarding");
-  }
+  // if (!isOnboarded) {
+  //  redirect("/onboarding");
+  // }
 
   // const insights = await getIndustryInsights();
 
-  return (
-    <div className="container mx-auto">
-      <DashboardView insights={insights} />
-    </div>
-  );
+  return <Sidebar />;
 }
-

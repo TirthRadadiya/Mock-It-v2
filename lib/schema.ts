@@ -1,12 +1,15 @@
 import { z } from "zod";
 
 export const onboardingSchema = z.object({
-  industry: z.string({
-    required_error: "Please select an industry",
+  // industry: z.string({
+  //   required_error: "Please select an industry",
+  // }),
+  title: z.string({
+    required_error: "Please select an title of your role",
   }),
-  subIndustry: z.string({
-    required_error: "Please select a specialization",
-  }),
+  // subIndustry: z.string({
+  //   required_error: "Please select a specialization",
+  // }),
   bio: z.string().max(500).optional(),
   experience: z
     .string()

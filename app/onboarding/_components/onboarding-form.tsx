@@ -30,7 +30,7 @@ import {
 import { onboardingSchema } from "@/lib/schema";
 // import { updateUser } from "@/actions/user";
 
-const OnboardingForm = ({ industries }: any) => {
+const OnboardingForm = ({ techRoles }: { techRoles: string[] }) => {
   const router = useRouter();
   const [selectedIndustry, setSelectedIndustry] = useState<any>(null);
 
@@ -45,26 +45,34 @@ const OnboardingForm = ({ industries }: any) => {
     handleSubmit,
     formState: { errors },
     setValue,
-    watch,
+    // watch,
   } = useForm({
     resolver: zodResolver(onboardingSchema),
   });
 
   const onSubmit = async (values: any) => {
-    // try {
-    //   const formattedIndustry = `${values.industry}-${values.subIndustry
-    //     .toLowerCase()
-    //     .replace(/ /g, "-")}`;
+    try {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-    //   await updateUserFn({
-    //     ...values,
-    //     industry: formattedIndustry,
-    //   });
-    // } catch (error) {
-    //   console.error("Onboarding error:", error);
-    // }
+      const res = await fetch(`http://127.0.0.1:8000/users/${user?._id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          title: values?.title,
+          experienceYears: values?.experience,
+          professionalSummary: values?.bio,
+          skills: values?.skills,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-    console.log(values);
+      const data = await res.json();
+
+      console.log(data);
+    } catch (error) {
+      console.error("Onboarding error:", error);
+    }
   };
 
   // useEffect(() => {
@@ -75,7 +83,7 @@ const OnboardingForm = ({ industries }: any) => {
   //   }
   // }, [updateResult, updateLoading]);
 
-  const watchIndustry = watch("industry");
+  // const watchIndustry = watch("industry");
 
   return (
     <div className="flex items-center justify-center bg-background">
@@ -92,38 +100,35 @@ const OnboardingForm = ({ industries }: any) => {
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="industry">Industry</Label>
+              <Label htmlFor="title">Title</Label>
               <Select
                 onValueChange={(value) => {
-                  setValue("industry", value);
+                  setValue("title", value);
                   setSelectedIndustry(
-                    industries.find((ind: any) => ind.id === value)
+                    techRoles.find((title: string) => title === value)
                   );
-                  setValue("subIndustry", "");
                 }}
               >
-                <SelectTrigger id="industry">
-                  <SelectValue placeholder="Select an industry" />
+                <SelectTrigger id="title">
+                  <SelectValue placeholder="Select an title" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Industries</SelectLabel>
-                    {industries.map((ind: any) => (
-                      <SelectItem key={ind.id} value={ind.id}>
-                        {ind.name}
+                    <SelectLabel>Role Title</SelectLabel>
+                    {techRoles.map((title: string) => (
+                      <SelectItem key={title} value={title}>
+                        {title}
                       </SelectItem>
                     ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              {errors.industry && (
-                <p className="text-sm text-red-500">
-                  {errors.industry.message}
-                </p>
+              {errors.title && (
+                <p className="text-sm text-red-500">{errors.title.message}</p>
               )}
             </div>
 
-            {watchIndustry && (
+            {/* {watchIndustry && (
               <div className="space-y-2">
                 <Label htmlFor="subIndustry">Specialization</Label>
                 <Select
@@ -149,7 +154,7 @@ const OnboardingForm = ({ industries }: any) => {
                   </p>
                 )}
               </div>
-            )}
+            )} */}
 
             <div className="space-y-2">
               <Label htmlFor="experience">Years of Experience</Label>
