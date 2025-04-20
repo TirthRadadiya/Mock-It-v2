@@ -6,6 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useSocket } from "@/context/SocketProvider";
 import { Menu } from "lucide-react";
 import React, { useState } from "react";
+import SingleRow from "./SingleRow";
+import { SmartJobs } from "@/data/dashboad";
 
 const LeftSidebar = () => {
   const { setMenuOpen } = useSocket();
@@ -24,7 +26,10 @@ const LeftSidebar = () => {
         </div>
 
         {/* Rows */}
-        {[1, 2, 3, 4, 5, 6].map((row) => (
+        <SingleRow title="Smart Jobs" data={SmartJobs}/>
+        <SingleRow title="Mock Interviews" data={SmartJobs}/>
+        <SingleRow title="Quizes" data={SmartJobs}/>
+        {/* {[1, 2, 3, 4, 5, 6].map((row) => (
           <div key={row} className="p-4 space-y-4">
             <h2 className="text-xl font-semibold">Section {row}</h2>
             <div className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar">
@@ -38,7 +43,7 @@ const LeftSidebar = () => {
               ))}
             </div>
           </div>
-        ))}
+        ))} */}
       </div>
     </>
   );
