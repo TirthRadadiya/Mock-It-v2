@@ -35,7 +35,7 @@ export default function RootLayout({
         <SocketProvider>
           <body className={`${monaSans.className} antialiased pattern`}>
             <Header />
-            <main className="min-h-screen">{children}</main>
+            <main className="overflow-y-hidden">{children}</main>
             <Toaster richColors />
             <Toaster />
           </body>

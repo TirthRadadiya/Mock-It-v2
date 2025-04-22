@@ -15,7 +15,7 @@ const SingleRow = ({ title, data }: { title: string; data: any }) => {
       <h2 className="text-xl font-semibold">{title}</h2>
       <div className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar">
         {data?.map((card: any) => (
-          <Link href={`/smart-jobs/${card?._id}`} key={card?._id}>
+          <Link href={`/dashboard/smart-jobs/${card?._id}`} key={card?._id}>
             <Card className="min-w-[350px] flex-shrink-0 shadow-md rounded-2xl">
               <CardHeader>
                 <CardTitle>

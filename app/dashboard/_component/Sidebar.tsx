@@ -14,7 +14,7 @@ const LeftSidebar = () => {
   return (
     <>
       {/* Main content */}
-      <div className="flex-1 w-full lg:w-4/6 flex flex-col max-h-screen overflow-y-scroll hide-scrollbar">
+      <div className="flex-1 w-full flex flex-col overflow-y-scroll hide-scrollbar">
         {/* Hamburger */}
         <div className="lg:hidden p-4">
           <Button

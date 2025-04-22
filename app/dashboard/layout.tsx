@@ -13,7 +13,7 @@ export default function Layout({ children }: any) {
   // const [menuOpen, setMenuOpen] = useState(false);
   const { menuOpen, setMenuOpen } = useSocket();
   return (
-    <div className="px-5 mt-25 flex max-h-screen w-full">
+    <div className="px-5 mt-25 flex w-full overflow-y-hidden">
       {/* <div className="flex items-center justify-between mb-5">
         <h1 className="text-6xl font-bold gradient-title"></h1>
       </div> */}
@@ -77,7 +77,9 @@ export default function Layout({ children }: any) {
       <Suspense
         fallback={<BarLoader className="mt-4" width={"100%"} color="gray" />}
       >
-        {children}
+        <div className="w-full max-h-[90vh] overflow-y-auto px-4 pb-10 hide-scrollbar">
+          {children}
+        </div>
       </Suspense>
     </div>
   );

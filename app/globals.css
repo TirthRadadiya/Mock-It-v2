@@ -402,3 +402,41 @@ layer base {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+/* Tailored for ShadCN theme using Tailwind's dark mode */
+
+.scrollbar-custom {
+  scrollbar-width: thin;
+  scrollbar-color: #d4d4d8 transparent; /* light: zinc-300 */
+}
+
+.dark .scrollbar-custom {
+  scrollbar-color: #52525b transparent; /* dark: zinc-600 */
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: #d4d4d8; /* light: zinc-300 */
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.dark .scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: #52525b; /* dark: zinc-600 */
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background-color: #a1a1aa; /* light hover: zinc-400 */
+}
+
+.dark .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background-color: #71717a; /* dark hover: zinc-500 */
+}
