@@ -1,83 +1,124 @@
-// @ts-nocheck
 "use client";
 
-import { BarLoader } from "react-spinners";
-import { Button } from "@/components/ui/button";
+import { useState, Suspense, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { AppWindow, Brain, List, Menu, NotebookPen, X } from "lucide-react";
 import Link from "next/link";
-import React, { Suspense } from "react";
-import { useSocket } from "@/context/SocketProvider";
+import {
+  AppWindow,
+  NotebookPen,
+  Brain,
+  List,
+  ChevronRight,
+  ChevronLeft,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { BarLoader } from "react-spinners";
+import { usePathname } from "next/navigation";
 
 export default function Layout({ children }: any) {
-  // const [menuOpen, setMenuOpen] = useState(false);
-  const { menuOpen, setMenuOpen } = useSocket();
-  return (
-    <div className="px-5 mt-25 flex w-full overflow-y-hidden">
-      {/* <div className="flex items-center justify-between mb-5">
-        <h1 className="text-6xl font-bold gradient-title"></h1>
-      </div> */}
+  const [expandSidebar, setExpandSidebar] = useState(false);
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const pathname = usePathname();
 
+  useEffect(() => {
+    const checkScreen = () => setIsLargeScreen(window.innerWidth >= 1024);
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+    return () => window.removeEventListener("resize", checkScreen);
+  }, []);
+
+  const showLabels = expandSidebar || isLargeScreen;
+
+  const navItems = [
+    { label: "Dashboard", href: "/dashboard", icon: <AppWindow size={20} /> },
+    {
+      label: "Smart Jobs",
+      href: "/dashboard/smart-jobs",
+      icon: <NotebookPen size={20} />,
+    },
+    {
+      label: "Mock Interviews",
+      href: "/dashboard/mock-interviews",
+      icon: <Brain size={20} />,
+    },
+    { label: "Quizzes", href: "/dashboard/quizes", icon: <List size={20} /> },
+  ];
+
+  return (
+    <div className="flex h-screen md:h-[92vh] w-full bg-black text-white overflow-hidden mt-15 relative">
+      {/* Sidebar */}
       <div
         className={cn(
-          "text-white p-4 pt-0 space-y-6 transition-all duration-300 shadow-lg",
-          "lg:block lg:w-1/6",
-          menuOpen ? "block absolute w-3/5 h-full z-50" : "hidden"
+          "max-h-screen text-white pt-10",
+          "transition-all duration-300 ease-in-out",
+          "bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-800 shadow-xl",
+          showLabels ? "w-56" : "w-16"
         )}
       >
-        {/* Close Button for Mobile */}
-        <div className="lg:hidden flex justify-end">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setMenuOpen(false)}
-          >
-            <X className="text-white" />
-          </Button>
-        </div>
+        {/* Mobile Toggle Button */}
+        {!isLargeScreen && (
+          <div className="flex justify-end p-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setExpandSidebar(!expandSidebar)}
+            >
+              {expandSidebar ? <ChevronLeft /> : <ChevronRight />}
+            </Button>
+          </div>
+        )}
 
-        <nav className="space-y-0">
-          <div className="text-sm uppercase text-gray-400 mb-5">Navigation</div>
-          <ul className="space-y-2 font-medium list-none">
-            <li className="hover:text-primary cursor-pointer p-3 bg-gray-900 rounded-lg">
-              <Link href="/dashboard" className="flex">
-                <span className="mr-3">
-                  <AppWindow className="text-white" />
-                </span>
-                Dashboard
+        {/* Navigation */}
+        <nav className="mt-4 space-y-3 px-2">
+          {navItems.map(({ label, href, icon }) => {
+            const isActive = pathname === href;
+
+            return (
+              <Link key={label} href={href}>
+                <div
+                  className={cn(
+                    "flex items-center gap-3 px-4 py-2 rounded-lg my-5 cursor-pointer transition-all",
+                    "bg-gradient-to-r from-[#7F5FFF] to-[#A85FFF]",
+                    isActive ? "border-2 border-white" : "border-none",
+                    {
+                      "text-white": isActive,
+                      "text-zinc-200": !isActive,
+                      "justify-center": !showLabels,
+                      "justify-start": showLabels,
+                    }
+                  )}
+                >
+                  <span
+                    className="text-lg text-zinc-200"
+                  >
+                    {icon}
+                  </span>
+                  {showLabels && (
+                    <span
+                      className="text-lg text-zinc-200"
+                    >
+                      {label}
+                    </span>
+                  )}
+                </div>
               </Link>
-            </li>
-            <li className="hover:text-primary cursor-pointer flex p-3 bg-gray-900 rounded-lg">
-              <Link href="/dashboard/smart-jobs" className="flex">
-                <span className="mr-3">
-                  <NotebookPen className="text-white" />
-                </span>
-                Smart Jobs
-              </Link>
-            </li>
-            <li className="hover:text-primary cursor-pointer flex p-3 bg-gray-900 rounded-lg">
-              <Link href="/dashboard/mock-interviews" className="flex">
-                <span className="mr-3">
-                  <Brain className="text-white" />
-                </span>
-                Mock Interviews
-              </Link>
-            </li>
-            <li className="hover:text-primary cursor-pointer flex p-3 bg-gray-900 rounded-lg">
-              <Link href="/dashboard/quizes" className="flex">
-                <span className="mr-3">
-                  <List className="text-white" />
-                </span>
-                Quizes
-              </Link>
-            </li>
-          </ul>
+            );
+          })}
         </nav>
+
+        {/* Footer */}
+        {showLabels && (
+          <div className="absolute bottom-4 left-4 text-xs text-gray-400">
+            © 2025 SensAi
+          </div>
+        )}
       </div>
+
+      {/* Main Content */}
       <Suspense
         fallback={<BarLoader className="mt-4" width={"100%"} color="gray" />}
       >
-        <div className="w-full max-h-[90vh] overflow-y-auto px-4 pb-10 hide-scrollbar">
+        <div className="flex-1 overflow-y-auto px-4 pt-4 hide-scrollbar">
           {children}
         </div>
       </Suspense>
