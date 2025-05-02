@@ -7,16 +7,33 @@ import {
 } from "@/components/ui/card";
 import Link from "next/link";
 import React from "react";
-import { number } from "zod";
 
-const SingleRow = ({ title, data }: { title: string; data: any }) => {
+const SingleRow = ({
+  title = "",
+  data,
+  scrollable = false,
+}: {
+  title?: string;
+  data: any;
+  scrollable?: boolean;
+}) => {
   return (
     <div className="p-4 space-y-4">
-      <h2 className="text-xl font-semibold">{title}</h2>
-      <div className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar">
+      {title && <h2 className="text-xl font-semibold">{title}</h2>}
+
+      <div
+        className={`
+          flex gap-4 pb-4 w-fit
+          ${
+            scrollable
+              ? "overflow-x-auto flex-nowrap hide-scrollbar"
+              : "flex-wrap"
+          }
+        `}
+      >
         {data?.map((card: any) => (
           <Link href={`/dashboard/smart-jobs/${card?._id}`} key={card?._id}>
-            <Card className="min-w-[350px] max-w-sm h-[260px] flex-shrink-0 rounded-2xl bg-white/10 backdrop-blur-lg border border-white/20 text-white relative overflow-hidden transition-transform duration-300 before:content-[''] before:absolute before:inset-0 before:-z-10 before:rounded-2xl before:bg-purple-500/30 before:blur-xl before:opacity-0 hover:before:opacity-100">
+            <Card className="min-w-[350px] lg:w-100 max-w-sm h-[260px] flex-shrink-0 rounded-2xl bg-white/10 backdrop-blur-lg border border-white/20 text-white relative overflow-hidden transition-transform duration-300 before:content-[''] before:absolute before:inset-0 before:-z-10 before:rounded-2xl before:bg-purple-500/30 before:blur-xl before:opacity-0 hover:before:opacity-100">
               <CardHeader className="p-6 pb-3">
                 <CardTitle>
                   <div className="flex justify-between items-center mb-3 text-lg font-semibold">

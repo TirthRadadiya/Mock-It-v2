@@ -15,9 +15,9 @@ const LeftSidebar = () => {
       {/* Main content */}
       <div className="flex-1 w-full flex flex-col overflow-y-scroll hide-scrollbar">
         {/* Rows */}
-        <SingleRow title="Smart Jobs" data={SmartJobs} />
-        <SingleRow title="Mock Interviews" data={SmartJobs} />
-        <SingleRow title="Quizes" data={SmartJobs} />
+        <SingleRow title="Smart Jobs" data={SmartJobs} scrollable/>
+        <SingleRow title="Mock Interviews" data={SmartJobs} scrollable />
+        <SingleRow title="Quizes" data={SmartJobs} scrollable />
         {/* {[1, 2, 3, 4, 5, 6].map((row) => (
           <div key={row} className="p-4 space-y-4">
             <h2 className="text-xl font-semibold">Section {row}</h2>

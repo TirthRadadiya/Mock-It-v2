@@ -1,9 +1,13 @@
-import React from 'react'
+import React from "react";
+import { SmartJobs as jobs } from "@/data/dashboad";
+import SingleScreen from "@/components/SingleScreen";
 
 const MockInterviews = () => {
   return (
-    <div>MockInterviews</div>
-  )
-}
+    <>
+      <SingleScreen items={jobs} />
+    </>
+  );
+};
 
-export default MockInterviews
+export default MockInterviews;
