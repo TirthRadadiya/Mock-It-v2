@@ -21,6 +21,8 @@ class SocketService {
     try {
       const model = this.genAI.getGenerativeModel({
         model: "gemini-2.0-flash",
+        systemInstruction:
+          "You are an interviwer who has taken many interview. Based on given user's response ask next question and analyze user's response. Behave like an interviweer",
       });
       const result = await model.generateContent(userMessage);
       const responseText = result.response.text();
