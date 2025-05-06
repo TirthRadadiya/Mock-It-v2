@@ -18,7 +18,13 @@ import { usePathname, useRouter } from "next/navigation";
 
 const ITEMS_PER_PAGE = 6;
 
-export default function SingleScreen({ items = [] }: { items: any }) {
+export default function SingleScreen({
+  items = [],
+  title,
+}: {
+  items: any;
+  title: string;
+}) {
   const [currentPage, setCurrentPage] = useState(1);
 
   const router = useRouter();
@@ -37,6 +43,8 @@ export default function SingleScreen({ items = [] }: { items: any }) {
   const end = start + ITEMS_PER_PAGE;
   const currentItems = items.slice(start, end);
 
+  console.log(currentItems);
+
   if (!items.length) return;
 
   return (
@@ -50,7 +58,7 @@ export default function SingleScreen({ items = [] }: { items: any }) {
         </Button>
       </div>
       <div className="">
-        <SingleRow data={currentItems} />
+        <SingleRow title={title} data={currentItems} />
       </div>
 
       <Pagination>

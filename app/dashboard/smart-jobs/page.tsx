@@ -10,7 +10,7 @@ const SmartJobs = async () => {
 
   return (
     <>
-      <SingleScreen items={smartjobs} />
+      <SingleScreen items={smartjobs.results} title="Smart Jobs" />
     </>
   );
 };
