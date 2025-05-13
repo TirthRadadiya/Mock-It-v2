@@ -6,6 +6,9 @@ import { io, Socket } from "socket.io-client";
 interface ISocketContext {
   sendMessage: (message: string) => any;
   socket: Socket | null;
+  agentMessage: string;
+  menuOpen: Boolean;
+  setMenuOpen: any;
   // startSocket: (path: string) => void;
 }
 
@@ -27,6 +30,8 @@ export const useSocket = () => {
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const [socket, setSocket] = React.useState<Socket | null>(null);
+  const [agentMessage, setAgentMessage] = React.useState<string>("");
+  const [menuOpen, setMenuOpen] = React.useState<Boolean>(false);
 
   // const startSocket: ISocketContext["startSocket"] = (path: string) => {
   //   const _socket = io(path);
@@ -41,7 +46,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       console.log("send message", message);
       if (socket) {
         console.log("socket", socket.id);
-        socket.emit("event:message", { message, socketId: socket.id });
+        socket.emit("event:message", { message });
       }
     },
     [socket]
@@ -57,6 +62,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
     _socket.on("event:receive-message", (data) => {
       console.log("receive message", data);
+      setAgentMessage(data.message);
     });
 
     return () => {
@@ -66,7 +72,9 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   }, []);
 
   return (
-    <socketContext.Provider value={{ sendMessage, socket }}>
+    <socketContext.Provider
+      value={{ sendMessage, socket, agentMessage, menuOpen, setMenuOpen }}
+    >
       {children}
     </socketContext.Provider>
   );
